@@ -302,7 +302,7 @@ type internal FSharpCheckProjectResults =
 #endif
 
 #if FABLE_COMPILER
-    internal new : projectFileName:string * keepAssemblyContents: bool * errors: FSharpErrorInfo[] * details:(TcGlobals*TcImports*Tast.CcuThunk*Tast.ModuleOrNamespaceType*TcSymbolUses list*TypeChecker.TopAttribs option*CompileOps.IRawFSharpAssemblyData option * ILAssemblyRef * AccessibilityLogic.AccessorDomain * Tast.TypedImplFile list option * string[]) option * reactorOps: IReactorOperations -> FSharpCheckProjectResults
+    internal new : projectFileName:string * tcConfigOption: TcConfig option * keepAssemblyContents: bool * errors: FSharpErrorInfo[] * details:(TcGlobals*TcImports*Tast.CcuThunk*Tast.ModuleOrNamespaceType*TcSymbolUses list*TypeChecker.TopAttribs option*CompileOps.IRawFSharpAssemblyData option * ILAssemblyRef * AccessibilityLogic.AccessorDomain * Tast.TypedImplFile list option * string[]) option * reactorOps: IReactorOperations -> FSharpCheckProjectResults
 #endif
     /// The errors returned by processing the project
     member Errors: FSharpErrorInfo[]
@@ -312,6 +312,9 @@ type internal FSharpCheckProjectResults =
 
     /// Get a view of the overall contents of the assembly. Only valid to use if HasCriticalErrors is false.
     member AssemblyContents: FSharpAssemblyContents
+
+    /// Get an optimized view of the overall contents of the assembly. Only valid to use if HasCriticalErrors is false.
+    member OptimizedAssemblyContents: FSharpAssemblyContents
 
     /// Get the resolution of the ProjectOptions 
     member ProjectContext: FSharpProjectContext

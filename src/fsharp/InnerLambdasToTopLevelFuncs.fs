@@ -3,6 +3,9 @@
 module internal Microsoft.FSharp.Compiler.InnerLambdasToTopLevelFuncs 
 
 open Internal.Utilities
+#if FABLE_COMPILER
+open Microsoft.FSharp.Core.Operators
+#endif
 open Microsoft.FSharp.Compiler.AbstractIL 
 open Microsoft.FSharp.Compiler.AbstractIL.Internal 
 open Microsoft.FSharp.Compiler.AbstractIL.Internal.Library 
