@@ -2,6 +2,10 @@
 
 namespace Microsoft.FSharp.Compiler.SourceCodeServices
 
+#if FABLE_COMPILER
+open Internal.Utilities
+open Microsoft.FSharp.Control
+#endif
 open System.Threading
 open Microsoft.FSharp.Compiler.AbstractIL.Internal.Library
 

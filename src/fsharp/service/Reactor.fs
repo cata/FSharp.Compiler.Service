@@ -1,6 +1,10 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information.
 
 namespace Microsoft.FSharp.Compiler.SourceCodeServices
+#if FABLE_COMPILER
+open Internal.Utilities
+open Microsoft.FSharp.Control
+#endif
 open System
 open System.Diagnostics
 open System.Globalization

@@ -9,12 +9,12 @@ module internal Microsoft.FSharp.Compiler.AbstractIL.ILBinaryReader
 
 #nowarn "42" // This construct is deprecated: it is only for use in the F# library
 
+open Internal.Utilities
+open Internal.Utilities.Collections
 open System
 open System.IO
 open System.Runtime.InteropServices
 open System.Collections.Generic
-open Internal.Utilities
-open Internal.Utilities.Collections
 open Microsoft.FSharp.Collections
 open Microsoft.FSharp.Compiler.AbstractIL 
 open Microsoft.FSharp.Compiler.AbstractIL.Internal 
@@ -768,7 +768,7 @@ let mkCacheInt32 lowMem _inbase _nm _sz  =
             | null -> cache :=  new Dictionary<int32, _>(11)
             | _ -> ()
             !cache
-#if FABLE_COMPILER
+#if FABLE_COMPILER_NO_BYREF
         let ok, res = cache.TryGetValue(idx)
 #else
         let mutable res = Unchecked.defaultof<_>
@@ -1036,7 +1036,7 @@ let count c =
     ()
 #endif
         
-#if FABLE_COMPILER // no byref parameters
+#if FABLE_COMPILER_NO_BYREF
 
 let seekReadUInt16Adv ctxt (addr: int) = 
     let res = seekReadUInt16 ctxt.is addr

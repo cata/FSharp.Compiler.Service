@@ -6,6 +6,11 @@
 
 namespace Microsoft.FSharp.Compiler.SourceCodeServices
 
+#if FABLE_COMPILER
+open Internal.Utilities
+open Microsoft.FSharp.Control
+#endif
+
 open System
 open Microsoft.FSharp.Compiler 
 open Microsoft.FSharp.Compiler.Range

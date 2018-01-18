@@ -10,8 +10,17 @@ namespace Internal.Utilities
 
 module System =
 
-    module Decimal =
-        let GetBits(d: decimal): int[] = [| 0; 0; 0; 0 |] //TODO: proper implementation
+    // type Tuple<'T1> = System.ValueTuple<'T1>
+    // type Tuple<'T1,'T2> = System.ValueTuple<'T1,'T2>
+    // type Tuple<'T1,'T2,'T3> = System.ValueTuple<'T1,'T2,'T3>
+    // type Tuple<'T1,'T2,'T3,'T4> = System.ValueTuple<'T1,'T2,'T3,'T4>
+    // type Tuple<'T1,'T2,'T3,'T4,'T5> = System.ValueTuple<'T1,'T2,'T3,'T4,'T5>
+    // type Tuple<'T1,'T2,'T3,'T4,'T5,'T6> = System.ValueTuple<'T1,'T2,'T3,'T4,'T5,'T6>
+    // type Tuple<'T1,'T2,'T3,'T4,'T5,'T6,'T7> = System.ValueTuple<'T1,'T2,'T3,'T4,'T5,'T6,'T7>
+    // type Tuple<'T1,'T2,'T3,'T4,'T5,'T6,'T7,'TRest> = System.ValueTuple<'T1,'T2,'T3,'T4,'T5,'T6,'T7,'TRest>
+
+    // module Decimal =
+    //     let GetBits(d: decimal): int[] = [| 0; 0; 0; 0 |] //TODO: proper implementation
 
     module Diagnostics =
         type Trace() =
@@ -20,6 +29,15 @@ module System =
     module Reflection =
         type AssemblyName(assemblyName: string) =
             member x.Name = assemblyName //TODO: proper implementation
+
+    module Threading =
+        type CancellationToken(canceled: bool) =
+            new () = CancellationToken(false)
+            static member None = CancellationToken(false)
+            member x.IsCancellationRequested = canceled
+
+    type OperationCanceledException(ct: Threading.CancellationToken) =
+        inherit System.Exception()
 
     type WeakReference<'T>(v: 'T) =
         member x.TryGetTarget () = (true, v)
@@ -47,9 +65,17 @@ module System =
                 new (comparer: IEqualityComparer<'TKey>) = { inherit Dictionary<'TKey, 'TValue>(comparer) }
                 member x.TryAdd (key:'TKey, value:'TValue) = x.[key] <- value; true
                 member x.GetOrAdd (key, valueFactory) =
-                    match x.TryGetValue key with
-                    | true, v -> v
-                    | false, _ -> let v = valueFactory(key) in x.[key] <- v; v
+#if FABLE_COMPILER_NO_BYREF
+                    let ok, res = x.TryGetValue(key)
+#else
+                    let mutable res = Unchecked.defaultof<_>
+                    let ok = x.TryGetValue(key, &res)
+#endif
+                    if ok then res
+                    else
+                        let res = valueFactory(key)
+                        x.[key] <- res
+                        res
 
     module IO =
         module Directory =
@@ -110,48 +136,52 @@ module System =
     module Char =
         open System.Globalization
 
-        let GetUnicodeCategory (c: char): UnicodeCategory = //TODO: proper Unicode implementation
-            LanguagePrimitives.EnumOfValue (int categoryForLatin1.[int c])
-        let IsControl (c: char) =
-            GetUnicodeCategory(c) = UnicodeCategory.Control
-        let IsDigit (c: char) =
-            GetUnicodeCategory(c) = UnicodeCategory.DecimalDigitNumber
-        let IsLetter (c: char) =
-            match GetUnicodeCategory(c) with
-            | UnicodeCategory.UppercaseLetter
-            | UnicodeCategory.LowercaseLetter
-            | UnicodeCategory.TitlecaseLetter
-            | UnicodeCategory.ModifierLetter
-            | UnicodeCategory.OtherLetter -> true
-            | _ -> false
-        let IsLetterOrDigit (c: char) =
-            IsLetter(c) || IsDigit(c)
-        let IsWhiteSpace (c: char) =
-            // There are characters which belong to UnicodeCategory.Control but are considered as white spaces.
-            c = ' ' || (c >= '\x09' && c <= '\x0d') || c = '\xa0' || c = '\x85'
-        let IsUpper (c: char) =
-            GetUnicodeCategory(c) = UnicodeCategory.UppercaseLetter
-        let IsLower (c: char) =
-            GetUnicodeCategory(c) = UnicodeCategory.LowercaseLetter
-        let IsPunctuation (c: char) =
-            match GetUnicodeCategory(c) with
-            | UnicodeCategory.ConnectorPunctuation
-            | UnicodeCategory.DashPunctuation
-            | UnicodeCategory.OpenPunctuation
-            | UnicodeCategory.ClosePunctuation
-            | UnicodeCategory.InitialQuotePunctuation
-            | UnicodeCategory.FinalQuotePunctuation
-            | UnicodeCategory.OtherPunctuation -> true
-            | _ -> false
+        let GetUnicodeCategory (c: char): UnicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c)
         let IsSurrogatePair (s,i) = false //TODO: proper Unicode implementation
-        let ToUpper (c: char) = if IsLower(c) then char(int('A') + (int(c) - int('a'))) else c
-        let ToLower (c: char) = if IsUpper(c) then char(int('a') + (int(c) - int('A'))) else c
-        let ToUpperInvariant (c: char) = ToUpper(c)
-        let ToLowerInvariant (c: char) = ToLower(c)
-        let ToString (c: char) = string c
+
+        // let GetUnicodeCategory (c: char): UnicodeCategory = //TODO: proper Unicode implementation
+        //     LanguagePrimitives.EnumOfValue (int categoryForLatin1.[int c])
+        // let IsControl (c: char) =
+        //     GetUnicodeCategory(c) = UnicodeCategory.Control
+        // let IsDigit (c: char) =
+        //     GetUnicodeCategory(c) = UnicodeCategory.DecimalDigitNumber
+        // let IsLetter (c: char) =
+        //     match GetUnicodeCategory(c) with
+        //     | UnicodeCategory.UppercaseLetter
+        //     | UnicodeCategory.LowercaseLetter
+        //     | UnicodeCategory.TitlecaseLetter
+        //     | UnicodeCategory.ModifierLetter
+        //     | UnicodeCategory.OtherLetter -> true
+        //     | _ -> false
+        // let IsLetterOrDigit (c: char) =
+        //     IsLetter(c) || IsDigit(c)
+        // let IsWhiteSpace (c: char) =
+        //     // There are characters which belong to UnicodeCategory.Control but are considered as white spaces.
+        //     c = ' ' || (c >= '\x09' && c <= '\x0d') || c = '\xa0' || c = '\x85'
+        // let IsUpper (c: char) =
+        //     GetUnicodeCategory(c) = UnicodeCategory.UppercaseLetter
+        // let IsLower (c: char) =
+        //     GetUnicodeCategory(c) = UnicodeCategory.LowercaseLetter
+        // let IsPunctuation (c: char) =
+        //     match GetUnicodeCategory(c) with
+        //     | UnicodeCategory.ConnectorPunctuation
+        //     | UnicodeCategory.DashPunctuation
+        //     | UnicodeCategory.OpenPunctuation
+        //     | UnicodeCategory.ClosePunctuation
+        //     | UnicodeCategory.InitialQuotePunctuation
+        //     | UnicodeCategory.FinalQuotePunctuation
+        //     | UnicodeCategory.OtherPunctuation -> true
+        //     | _ -> false
+        // let IsSurrogatePair (s,i) = false //TODO: proper Unicode implementation
+        // let ToUpper (c: char) = if IsLower(c) then char(int('A') + (int(c) - int('a'))) else c
+        // let ToLower (c: char) = if IsUpper(c) then char(int('a') + (int(c) - int('A'))) else c
+        // let ToUpperInvariant (c: char) = ToUpper(c)
+        // let ToLowerInvariant (c: char) = ToLower(c)
+        // let ToString (c: char) = string c
 
     module Text =
 
+#if FABLE_COMPILER_NO_BYREF
         type StringBuilder(?s: string) =
             let buf = ResizeArray<string>()
             do if Option.isSome s then buf.Add(s.Value)
@@ -160,6 +190,16 @@ module System =
             member x.Append(s: string) = buf.Add(s); x
             member x.AppendFormat(fmt: string, o: obj) = buf.Add(System.String.Format(fmt, o)); x
             override x.ToString() = System.String.Concat(buf)
+#else
+        type StringBuilder(?s: string) =
+            let sb = System.Text.StringBuilder()
+            do if Option.isSome s then sb.Append(s.Value) |> ignore
+            new (capacity: int, ?maxCapacity: int) = StringBuilder()
+            new (s: string, ?maxCapacity: int) = StringBuilder(s)
+            member x.Append(s: string) = sb.Append(s) |> ignore; x
+            member x.AppendFormat(fmt: string, o: obj) = sb.AppendFormat(fmt, o) |> ignore; x
+            override x.ToString() = sb.ToString()
+#endif
 
         module Encoding =
 
@@ -181,6 +221,7 @@ module System =
                     sb.ToString()
 
             module UTF8 = // TODO: add surrogate pairs
+
                 let GetBytes (s: string) =
                     let buf = ResizeArray<byte>()
                     let encodeUtf8 (c: char) =
@@ -197,6 +238,7 @@ module System =
                     s.ToCharArray() |> Array.map encodeUtf8 |> ignore
                     buf.ToArray()
 
+#if FABLE_COMPILER_NO_BYREF
                 let GetString (bytes: byte[], index: int, count: int) =
                     let decodeUtf8 pos =
                         let i1 = int(bytes.[pos])
@@ -218,6 +260,40 @@ module System =
                         sb.Append(string (char d)) |> ignore
                         pos <- pos + inc
                     sb.ToString()
+#else
+                let decodeUtf8 (bytes: byte[]) (pos: byref<int>) =
+                    let i1 = int(bytes.[pos])
+                    if i1 &&& 0x80 = 0 then
+                        pos <- pos + 1
+                        (i1 &&& 0x7F)
+                    else if i1 &&& 0xE0 = 0xC0 then
+                        let i2 = int(bytes.[pos + 1]) in
+                        pos <- pos + 2
+                        ((i1 &&& 0x1F) <<< 6) ||| (i2 &&& 0x3F)
+                    else if i1 &&& 0xF0 = 0xE0 then
+                        let i2 = int(bytes.[pos + 1]) in
+                        let i3 = int(bytes.[pos + 2]) in
+                        pos <- pos + 3
+                        ((i1 &&& 0x1F) <<< 12) ||| ((i2 &&& 0x3F) <<< 6) ||| (i3 &&& 0x3F)
+                    else
+                        pos <- pos + 1
+                        0 // invalid decoding
+                        
+                let GetString (bytes: byte[], index: int, count: int) =
+                    //let sb = StringBuilder()
+                    let chars: char array = Array.zeroCreate count
+                    let mutable pos = index
+                    let mutable cnt = 0
+                    let last = index + count
+                    while pos < last do
+                        let d = decodeUtf8 bytes &pos
+                        // sb.Append(string (char d)) |> ignore
+                        chars.[cnt] <- char d
+                        // pos <- pos + inc
+                        cnt <- cnt + 1
+                    //sb.ToString()
+                    System.String(chars, 0, cnt)
+#endif
 
 
 module Microsoft =
@@ -286,9 +362,14 @@ module Microsoft =
         //------------------------------------------------------------------------
         module Compiler =
             module SR =
-                let GetString(name:string) =
-                    let ok, value = SR.Resources.resources.TryGetValue(name)
-                    if ok then value
+                let GetString(name: string) =
+#if FABLE_COMPILER_NO_BYREF
+                    let ok, res = SR.Resources.resources.TryGetValue(name)
+#else
+                    let mutable res = Unchecked.defaultof<_>
+                    let ok = SR.Resources.resources.TryGetValue(name, &res)
+#endif
+                    if ok then res
                     else "Missing FSStrings error message for: " + name
 
             module internal DiagnosticMessage =
@@ -301,7 +382,7 @@ module Microsoft =
                         let fmt = Printf.StringFormat<'T>(tmp)
                         sprintf fmt
 
-                let postProcessString (s : string) =
+                let postProcessString (s: string) =
                     s.Replace("\\n","\n").Replace("\\t","\t")
                 let DeclareResourceString ((messageID: string),(fmt: string)) =
                     let messageString = SR.GetString(messageID) |> postProcessString

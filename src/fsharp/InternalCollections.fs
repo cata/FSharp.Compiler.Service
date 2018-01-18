@@ -216,9 +216,14 @@ type internal List =
         let result = System.Collections.Generic.List<'Key * System.Collections.Generic.List<'Value>>()
         let keyToIndex = Dictionary<'Key,int>(HashIdentity.Structural)
         let indexOfKey(key) =
-            match keyToIndex.TryGetValue(key) with
-            | true, v -> v
-            | false, _ -> 
+#if FABLE_COMPILER_NO_BYREF
+            let ok, res = keyToIndex.TryGetValue(key)
+#else
+            let mutable res = Unchecked.defaultof<_>
+            let ok = keyToIndex.TryGetValue(key, &res)
+#endif
+            if ok then res
+            else
                 keyToIndex.Add(key,!nextIndex)
                 nextIndex := !nextIndex + 1
                 !nextIndex - 1

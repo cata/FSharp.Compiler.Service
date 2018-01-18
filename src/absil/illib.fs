@@ -9,6 +9,7 @@ open Internal.Utilities
 open Microsoft.FSharp.Collections
 open Microsoft.FSharp.Core
 open Microsoft.FSharp.Core.Operators
+open Microsoft.FSharp.Control
 #endif
 open System
 open System.Collections

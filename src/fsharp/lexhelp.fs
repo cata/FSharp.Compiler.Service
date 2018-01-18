@@ -49,7 +49,7 @@ type LexResourceManager() =
     new (_) = LexResourceManager()
 #endif
     member x.InternIdentifierToken(s) = 
-#if FABLE_COMPILER
+#if FABLE_COMPILER_NO_BYREF
         let ok, res = strings.TryGetValue(s)
 #else
         let mutable res = Unchecked.defaultof<_> 
@@ -326,14 +326,19 @@ module Keywords =
         args.resourceManager.InternIdentifierToken s
 
     let KeywordOrIdentifierToken args (lexbuf:UnicodeLexing.Lexbuf) s =
-        match keywordTable.TryGetValue s with
-        | true, v ->
-            match v with 
+#if FABLE_COMPILER_NO_BYREF
+        let ok, res = keywordTable.TryGetValue(s)
+#else
+        let mutable res = Unchecked.defaultof<_>
+        let ok = keywordTable.TryGetValue(s, &res)
+#endif
+        if ok then
+            match res with 
             | RESERVED ->
                 warning(ReservedKeyword(FSComp.SR.lexhlpIdentifierReserved(s), lexbuf.LexemeRange))
                 IdentifierToken args lexbuf s
-            | _ -> v
-        | _ ->
+            | _ -> res
+        else
             match s with 
             | "__SOURCE_DIRECTORY__" ->
                 let filename = fileOfFileIndex lexbuf.StartPos.FileIndex

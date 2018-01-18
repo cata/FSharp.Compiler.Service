@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
+    <!-- <DefineConstants>$(DefineConstants);FX_NO_BIGINT</DefineConstants> -->
     <DefineConstants>$(DefineConstants);FABLE_COMPILER</DefineConstants>
     <DefineConstants>$(DefineConstants);FX_NO_CORHOST_SIGNER</DefineConstants>
     <DefineConstants>$(DefineConstants);FX_NO_LINKEDRESOURCES</DefineConstants>
@@ -16,12 +17,17 @@
     <DefineConstants>$(DefineConstants);NO_EXTENSIONTYPING</DefineConstants>
     <DefineConstants>$(DefineConstants);NO_INLINE_IL_PARSER</DefineConstants>
     <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="fsstrings.fs"/>
-    <Compile Include="unicode.fs"/>
+    <!-- <Compile Include="unicode.fs"/> -->
     <Compile Include="adapters.fs"/>
+    <!-- <Compile Include="math/n.fsi"/> -->
+    <!-- <Compile Include="math/n.fs"/> -->
+    <!-- <Compile Include="math/z.fsi"/> -->
+    <!-- <Compile Include="math/z.fs"/> -->
     <Compile Include="codegen/FSComp.fs"/>
     <Compile Include="codegen/FSIstrings.fs"/>
     <!-- <Compile Include="../FSharp.Compiler.Service/AssemblyInfo.fs"/> -->
@@ -208,6 +214,10 @@
     <!-- <Compile Include="$(FSharpSourcesRoot)/fsharp/fsi/fsi.fs"/> -->
     <Compile Include="service_shim.fs"/>
     <Compile Include="ast_print.fs"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="/Projects/dna-redux/src/FSharp.Core/FSharp.Core.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,6 +10,7 @@ namespace Microsoft.FSharp.Compiler.SourceCodeServices
 open Internal.Utilities
 open Internal.Utilities.Collections
 open Microsoft.FSharp.Collections
+open Microsoft.FSharp.Control
 
 open System
 open System.Text

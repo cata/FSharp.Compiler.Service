@@ -9,6 +9,7 @@ namespace Microsoft.FSharp.Compiler.SourceCodeServices
 
 #if FABLE_COMPILER
 open Internal.Utilities
+open Microsoft.FSharp.Control
 #endif
 open System
 open System.Collections.Generic
@@ -183,7 +184,12 @@ module ErrorHelpers =
                 [ // We use the first line of the file as a fallbackRange for reporting unexpected errors.
                   // Not ideal, but it's hard to see what else to do.
                   let fallbackRange = rangeN mainInputFileName 1
+#if FABLE_COMPILER
+                  let _fileInfo: int*int = fileInfo // ignore
+                  let ei = FSharpErrorInfo.CreateFromException(exn, isError, fallbackRange)
+#else
                   let ei = FSharpErrorInfo.CreateFromExceptionAndAdjustEof (exn, isError, fallbackRange, fileInfo)
+#endif
                   if allErrors || (ei.FileName = mainInputFileName) || (ei.FileName = TcGlobals.DummyFileNameForRangesWithoutASpecificLocation) then
                       yield ei ]
 

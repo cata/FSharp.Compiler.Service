@@ -7,7 +7,9 @@ namespace Microsoft.FSharp.Compiler.SourceCodeServices
 
 open Internal.Utilities
 open Internal.Utilities.Collections
-
+#if FABLE_COMPILER
+open Microsoft.FSharp.Control
+#endif
 open System
 open System.Collections.Generic
 open System.Collections.Concurrent
