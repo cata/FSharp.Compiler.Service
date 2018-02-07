@@ -22,3 +22,6 @@ NUGET
     System.Runtime (4.3) - restriction: || (&& (== net45) (>= netstandard1.3)) (== net46)
     System.Runtime.InteropServices (4.3) - restriction: || (&& (== net45) (>= netstandard1.3)) (== net46)
     System.Threading.Tasks.Dataflow (4.5.24)
+    WebSharper (4.1.5.205)
+    WebSharper.FSharp (4.1.5.205)
+      WebSharper (4.1.5.205)
