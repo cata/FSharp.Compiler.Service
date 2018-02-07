@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27323.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{2AA6E5F2-7CA4-41C6-86FE-748DCC88B49A}"
+	ProjectSection(SolutionItems) = preProject
+		build-ws.cmd = build-ws.cmd
+		build-ws.fsx = build-ws.fsx
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fcs.WebSharper", "fcs-websharper\Fcs.WebSharper.fsproj", "{B26D4E75-B247-43AA-AD7B-7CE7660FFA20}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B26D4E75-B247-43AA-AD7B-7CE7660FFA20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B26D4E75-B247-43AA-AD7B-7CE7660FFA20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B26D4E75-B247-43AA-AD7B-7CE7660FFA20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B26D4E75-B247-43AA-AD7B-7CE7660FFA20}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {548348AA-4D55-4ABD-9094-C9BBFF617D69}
+	EndGlobalSection
+EndGlobal
