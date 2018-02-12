@@ -1,4 +1,4 @@
-framework: net45, net46
+framework: net45, net46, net461
 
 source https://www.nuget.org/api/v2/
 
@@ -10,4 +10,5 @@ nuget Microsoft.Build.Framework 14.3.0
 nuget Microsoft.Build.Engine 14.3.0
 nuget Microsoft.Build 14.3.0
 nuget System.Threading.Tasks.Dataflow 4.5.24.0
-nuget WebSharper.FSharp
+
+nuget WebSharper.FSharp prerelease

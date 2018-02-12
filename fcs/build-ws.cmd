@@ -8,15 +8,15 @@ if errorlevel 1 (
   exit /b %errorlevel%
 )
 
-cd fcs-websharper\codegen
-dotnet restore
-cd ..\..
-
 .paket\paket.exe restore
 if errorlevel 1 (
   endlocal
   exit /b %errorlevel%
 )
+
+cd fcs-websharper\codegen
+dotnet restore
+cd ..\..
 
 packages\FAKE\tools\FAKE.exe build-ws.fsx %*
 if errorlevel 1 (
